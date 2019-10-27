@@ -26,9 +26,13 @@ sentence = "Client X: Federico"
 
 clientSocket.send(sentence.encode())
 
+print("Sent to Server:", sentence)
+print()
+
+ack = clientSocket.recv(1024)
 modifiedSentence = clientSocket.recv(1024)
 
-print ('From Server:', modifiedSentence.decode())
+print('Acknowledgement from Server:', ack.decode())
+print('Server message:', modifiedSentence.decode())
 
 clientSocket.close()
-
