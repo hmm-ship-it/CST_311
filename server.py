@@ -49,10 +49,7 @@ def threaded(c):
             if not data:
                 print(' Disconnecting with client')
                 break
-            
-            new_message = ""
-            new_message = data + " received"
-            
+                        
             if data not in clients:
                 clients_message.append(data)
                 clients.append(c)
