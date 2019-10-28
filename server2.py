@@ -28,10 +28,6 @@ import time
 #Variable Declarations (What! is this C or something???)
 clients_message = list()
 clients = list()
-number_of_clients = 0
-''' This last variable is used because I think question 5 requires both
-clients to connect before receiving the messages from client, a
-quick if statement took care of it'''
 
 # threaded fuction
 #Function that establishes the ability to keep multiple
@@ -39,30 +35,9 @@ quick if statement took care of it'''
 def threaded(c):
 
     global clients
-    
+
     while True:
         # data received from client
-        #Use this for point 5 if needed
-        if number_of_clients == 2:
-            data = c.recv(1024).decode()
-        
-            if not data:
-                print(' Disconnecting with client')
-                break
-            
-            new_message = ""
-            new_message = data + " received"
-            
-            if data not in clients:
-                clients_message.append(data)
-                clients.append(c)
-            
-            #Threaded connection stays open until messages sent
-            #This may be redundant code to the 'if not data:' above
-            if len(clients) == 3:
-                c.close()
-                
-        ''' #If the above is commented out below will work
         data = c.recv(1024).decode()
         
         if not data:
@@ -79,8 +54,7 @@ def threaded(c):
         #Threaded connection stays open until messages sent
         if len(clients) == 3:
             c.close()
-        #Just leave this here'''
-    c.close()
+
 """
  Main method that does all the heavy lifting of this program
  It creates the different threads for the clients and stores all the
@@ -92,11 +66,9 @@ def threaded(c):
 """
 def Main():
     global clients
-    global number_of_clients
     serverPort = 12000
     servername = '127.0.0.1'
     threads_list = []
-    
 
     # Create a TCP socket
     # Notice the use of SOCK_STREAM for TCP packets
@@ -112,7 +84,6 @@ def Main():
     while len(clients) < 2:
 
         connectionSocket, addr = serverSocket.accept()
-        number_of_clients += 1
         print('Connected to :', addr[0], ':', addr[1])
 
         #This is where all the threading happens

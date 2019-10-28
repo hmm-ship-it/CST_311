@@ -13,6 +13,7 @@ Client X: Federico
 
 
 from socket import *
+import time
 
 serverName = 'localhost'
 
@@ -22,6 +23,7 @@ clientSocket = socket(AF_INET, SOCK_STREAM)
 
 clientSocket.connect((serverName,serverPort))
 
+#time.sleep(5)
 sentence = "Client X: Federico"
 
 clientSocket.send(sentence.encode())
