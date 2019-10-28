@@ -119,6 +119,7 @@ def Main():
         t1 = threading.Thread(target=threaded, args=(connectionSocket,))
         threads_list.append(t1)
         t1.start()
+        t1.join(1)
         print (threading.currentThread().getName(), ': is Starting ')
 
         #This happens when the two clients have made a connection
