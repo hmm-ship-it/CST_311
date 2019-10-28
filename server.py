@@ -80,21 +80,27 @@ def Main():
 
     print ('The server is ready to receive')
 
+    #Will only run for two clients
     while len(clients) < 2:
 
         connectionSocket, addr = serverSocket.accept()
         print('Connected to :', addr[0], ':', addr[1])
 
+        #This is where all the threading happens
         t1 = threading.Thread(target=threaded, args=(connectionSocket,))
         threads_list.append(t1)
         t1.start()
         print (threading.currentThread().getName(), ': is Starting ')
 
-
+        #This happens when the two clients have made a connection
+        #This bit of code deals with sending the messages and tearing down the
+        #connection.
         if len(clients) == 2:
             print("waiting")
+            #The message that is sent
             message = clients_message[0].upper() + " received before " + clients_message[1].upper()
             print(clients_message[0] + " received before " + clients_message[1])
+            #Sends the ACK and message to each client
             for c in clients:
                 ack = "ACK"
                 c.send(ack.encode())
