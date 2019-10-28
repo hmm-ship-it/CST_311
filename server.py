@@ -39,20 +39,21 @@ def threaded(c):
     while True:
         # data received from client
         data = c.recv(1024).decode()
+        
         if not data:
             print('Disconnecting with client')
-
             break
-
+        
         new_message = ""
-
         new_message = data + " received"
-
+        
         if data not in clients:
             clients_message.append(data)
             clients.append(c)
-
-    c.close()
+            
+        #Threaded connection stays open until messages sent
+        if len(clients) == 3:
+            c.close()
 
 """
  Main method that does all the heavy lifting of this program
@@ -92,13 +93,16 @@ def Main():
 
         if len(clients) == 2:
             print("waiting")
-            message = clients_message[0].upper() + "received before " + clients_message[1].upper()
-            ack_message = clients_message[0] + "received before " + clients_message[1]
+            message = clients_message[0].upper() + " received before " + clients_message[1].upper()
+            print(clients_message[0] + " received before " + clients_message[1])
             for c in clients:
-                c.send(ack_message.encode())
+                ack = "ACK"
+                c.send(ack.encode())
                 time.sleep(1)
                 c.send(message.encode())
                 print("Sent acknowledgement to both X and Y")
+            #This increases the list size by one to ensure threads close
+            clients.append(message)
             break
 
     serverSocket.close()
