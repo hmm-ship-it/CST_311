@@ -1,65 +1,68 @@
 """
 Tim Hanneman
 Federico Rubino
-Assignment 2
-ServerTCP.py
+
+Programming Assignment #2
+TCP Server
+Using Multithreading
+
+Why we use multithreading:
+--------------------------
+The reason is straightforward, we don’t want only a single client
+to connect to our TCP server at a particular time but many clients
+simultaneously, in this case two. We want our program to support multiple
+clients at the same time. For this reason, we must use threads on the
+server side, so that whenever a client request comes, a separate thread
+can be assigned for handling each request.
+This program is built specifically to handle two clients at once, but thanks
+to multithreading it could handle more.
+
 """
 
-# import socket
+#Imports that support tcp sockets, multithreading and pausing
 from socket import *
-
-# import thread module
 from _thread import *
 import threading
+import time
 
-#print_lock = threading.Lock()
+#Variable Declarations (What! is this C or something???)
 clients_message = list()
 clients = list()
 
-
-# thread fuction
+# threaded fuction
+#Function that establishes the ability to keep multiple
+#threads open at once
 def threaded(c):
-    print('enter thread')
-    # lock acquired by client
-    #print_lock.acquire()
+
     global clients
 
-# TODO: I should keep this in a while loop until both clients have been
-# received
-# I should make a list of the clients to send the messages back at once
     while True:
         # data received from client
         data = c.recv(1024).decode()
         if not data:
             print('Disconnecting with client')
 
-            # lock released on exit
             break
 
-        # reverse the given string from client
-        # data = data[::-1]
-        #print( "Received:", data, flush=True)
         new_message = ""
 
         new_message = data + " received"
 
         if data not in clients:
-            print("data is!!!" + str(data), flush=True)
             clients_message.append(data)
             clients.append(c)
-            #print(len(clients), flush=True)
 
-            #    c.send(new_message.encode())
-
-            # close thread
-
-            # connection closed
-
-        #print_lock.release()
-        print("unlock", flush=True)
     c.close()
 
-
+"""
+ Main method that does all the heavy lifting of this program
+ It creates the different threads for the clients and stores all the
+ relavant information.
+ The server will stay open indefinitly until two clients have
+ successfuly connected to it
+ The server sends the messages received from the clients in uppercase
+ as well as transforms the message to uppercase. It also sends an ACK
+"""
 def Main():
     global clients
     serverPort = 12000
@@ -84,18 +87,19 @@ def Main():
         t1 = threading.Thread(target=threaded, args=(connectionSocket,))
         threads_list.append(t1)
         t1.start()
-        print (threading.currentThread().getName(), 'Starting')
-        print('after the thread is started \n\n' + str(len(clients)) + " Length of clients")
+        print (threading.currentThread().getName(), ': is Starting ')
 
 
         if len(clients) == 2:
             print("waiting")
-            #t1.join
+            message = clients_message[0].upper() + "received before " + clients_message[1].upper()
             ack_message = clients_message[0] + "received before " + clients_message[1]
             for c in clients:
                 c.send(ack_message.encode())
+                time.sleep(1)
+                c.send(message.encode())
+                print("Sent acknowledgement to both X and Y")
             break
-
 
     serverSocket.close()
 

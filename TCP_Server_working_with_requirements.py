@@ -63,7 +63,7 @@ def Main():
 
         t1 = threading.Thread(target=tcp_connection_thread, args=(connectionSocket,))
         #threads_list.append(t1)
-        t1.start
+        t1.start()
         print('tcp_thread_started')
         clients_count = clients_count + 1
 
